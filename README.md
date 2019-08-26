@@ -8,4 +8,5 @@ A collection of simple Linux scripts to make my life easier.
 Lists available drives and their partitions, allowing user to easilly mount them in their desired location.
 
 **Useage:**  
-`bash /path/to/mountNewDrive`
+`bash /path/to/mountNewDrive`  
+or just copy mountNewDrive to /usr/bin and invoke normally.
