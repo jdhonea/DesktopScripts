@@ -13,6 +13,7 @@ for i in "${devices[@]}"; do
     echo ${count}. $i
     let "count++"
 done
+let "count--"
 echo "Select the drive number to mount: [1/"$count"]"
 read input
 elements=${#devices[@]}
