@@ -1,0 +1,36 @@
+#!/bin/bash
+devices=(`ls /dev | awk '/^sd[a-z][0-9]/'`)
+echo "Select the drive number to mount: "
+count=1
+current=""
+for i in "${devices[@]}"; do
+    trimmed=${i::-1}
+    if [ "$current" != "$trimmed" ]; then
+        driveModel=(`lsblk -S | grep $trimmed | awk '{print $5}'`)
+        echo ${i::-1}": "$driveModel
+        current=$trimmed
+    fi
+    echo ${count}. $i
+    let "count++"
+done
+read input
+elements=${#devices[@]}
+if (($input < $elements+1)) && (($input > 0)); then
+    let "input--"
+    selection=${devices[$input]}
+    echo "Mount to ~/temp? [y/n]"
+    read mntInput
+    if [[ $mntInput == "y" ]]; then
+        dir=~/temp
+    elif [[ $mntInput == "n" ]]; then
+        echo "Enter mount point: "
+        read dir
+    else
+        exit 1
+    fi
+    [ ! -d "$dir" ] && mkdir -p "$dir"
+    `sudo mount /dev/$selection $dir`
+    echo "Drive mounted to $dir"
+else 
+    echo "Incorrect selection."
+fi
