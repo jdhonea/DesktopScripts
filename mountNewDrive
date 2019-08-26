@@ -1,8 +1,8 @@
 #!/bin/bash
 devices=(`ls /dev | awk '/^sd[a-z][0-9]/'`)
-echo "Select the drive number to mount: "
 count=1
 current=""
+echo "Available drives: "
 for i in "${devices[@]}"; do
     trimmed=${i::-1}
     if [ "$current" != "$trimmed" ]; then
@@ -13,6 +13,7 @@ for i in "${devices[@]}"; do
     echo ${count}. $i
     let "count++"
 done
+echo "Select the drive number to mount: [1/"$count"]"
 read input
 elements=${#devices[@]}
 if (($input < $elements+1)) && (($input > 0)); then
@@ -29,8 +30,13 @@ if (($input < $elements+1)) && (($input > 0)); then
         exit 1
     fi
     [ ! -d "$dir" ] && mkdir -p "$dir"
-    `sudo mount /dev/$selection $dir`
-    echo "Drive mounted to $dir"
+    `sudo cryptsetup isLuks /dev/$selection`
+    if [[ $? -eq 0 ]]; then
+        echo "Luks partion detected."
+        `sudo cryptsetup luksOpen /dev/$selection $selection` && `sudo mount /dev/mapper/$selection $dir` && echo "Mounted /dev/$selection to $dir."
+    else
+        `sudo mount /dev/$selection $dir` && echo "Mounted /dev/$selection to $dir."
+    fi
 else 
     echo "Incorrect selection."
 fi
