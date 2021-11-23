@@ -1,5 +1,5 @@
 #!/bin/bash
-devices=(`ls /dev | awk '/^sd[a-z][0-9]/'`)
+devices=(`ls /dev | awk '/^sd[a-z][0-9]+$/'`)
 count=1
 current=""
 echo "Available drives: "
