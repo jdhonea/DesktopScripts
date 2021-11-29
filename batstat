@@ -1,0 +1,20 @@
+#!/bin/bash
+
+readarray -t batteries < <(find "/sys/class/power_supply" -name "BAT*")
+totalPower=0
+totalEnergy=0
+for battery in "${batteries[@]}"; do
+power=`grep -h "POWER_NOW" "$battery/uevent"`
+power=${power##*=}
+totalPower=$(($totalPower + $power))
+energy=`grep -h "ENERGY_NOW" "$battery/uevent"`
+energy=${energy##*=}
+totalEnergy=$(($totalEnergy + $energy))
+done
+
+timeRemaining=`echo "scale=2 ; $totalEnergy / $totalPower" | bc`
+decimal=`echo "scale=2 ; $timeRemaining % 100" | bc`
+hours=${timeRemaining%.*}
+minutes=`echo "$decimal * 60" | bc`
+minutes=${minutes%.*}
+echo "$hours:$minutes"
