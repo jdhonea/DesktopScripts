@@ -1,20 +1,26 @@
 #!/bin/bash
+#Script for reading all batteries in a system and calculating the total runtime remaining.
+#Built it for use with WM status bars, which aside from i3status, calculated remaining runtime per battery
+#and was infuriating for trying to monitor your system's battery life.
 
 readarray -t batteries < <(find "/sys/class/power_supply" -name "BAT*")
 totalPower=0
 totalEnergy=0
+
 for battery in "${batteries[@]}"; do
-power=`grep -h "POWER_NOW" "$battery/uevent"`
-power=${power##*=}
-totalPower=$(($totalPower + $power))
-energy=`grep -h "ENERGY_NOW" "$battery/uevent"`
-energy=${energy##*=}
-totalEnergy=$(($totalEnergy + $energy))
+    power=`grep -h "POWER_NOW" "$battery/uevent"`
+    power=${power##*=}
+    totalPower=$(($totalPower + $power))
+    energy=`grep -h "ENERGY_NOW" "$battery/uevent"`
+    energy=${energy##*=}
+    totalEnergy=$(($totalEnergy + $energy))
 done
 
+#Quick maffs
 timeRemaining=`echo "scale=2 ; $totalEnergy / $totalPower" | bc`
 decimal=`echo "scale=2 ; $timeRemaining % 100" | bc`
 hours=${timeRemaining%.*}
 minutes=`echo "$decimal * 60" | bc`
 minutes=${minutes%.*}
+
 echo "$hours:$minutes"
