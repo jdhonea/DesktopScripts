@@ -17,10 +17,11 @@ for battery in "${batteries[@]}"; do
 done
 
 #Quick maffs
+[[ $totalPower -le 0 ]] && echo "Inf." && exit 0
 timeRemaining=`echo "scale=2 ; $totalEnergy / $totalPower" | bc`
 decimal=`echo "scale=2 ; $timeRemaining % 100" | bc`
 hours=${timeRemaining%.*}
 minutes=`echo "$decimal * 60" | bc`
 minutes=${minutes%.*}
 
-echo "$hours:$minutes"
+printf "%d:%.2d" $hours $minutes
