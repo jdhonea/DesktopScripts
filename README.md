@@ -20,5 +20,8 @@ Created primarily for use with your favorite status bar. I ran into issues with 
 
 ![Batstat Screenshot](resources/ksnip_20211130-113301.png)  
 
+**Requirements:**  
+- bc  
+
 **Usage**  
 `bash /path/to/batstat`
