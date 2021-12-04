@@ -4,6 +4,8 @@
 #and was infuriating for trying to monitor your system's battery life.
 
 readarray -t batteries < <(find "/sys/class/power_supply" -name "BAT*")
+readarray -t ac_adapters < <(find "/sys/class/power_supply" -name "AC*")
+
 totalPower=0
 totalEnergy=0
 
@@ -16,8 +18,16 @@ for battery in "${batteries[@]}"; do
     totalEnergy=$(($totalEnergy + $energy))
 done
 
-#Quick maffs
+#Checks all apdaters and prints "Inf." if one is found.
+for adapter in "${ac_adapters[@]}"; do
+    status=`grep -h "SUPPLY_ONLINE" "$adapter/uevent"`
+    [[ status -eq 1 ]] && echo "Inf." && exit 0
+done
+
+#Prevents divide by 0 error
 [[ $totalPower -le 0 ]] && echo "Inf." && exit 0
+
+#Quick maffs
 timeRemaining=`echo "scale=2 ; $totalEnergy / $totalPower" | bc`
 decimal=`echo "scale=2 ; $timeRemaining % 100" | bc`
 hours=${timeRemaining%.*}
