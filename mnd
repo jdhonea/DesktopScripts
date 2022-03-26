@@ -7,10 +7,12 @@ for i in "${devices[@]}"; do
     trimmed=${i::-1}
     if [ "$current" != "$trimmed" ]; then
         driveModel=(`lsblk -S | grep $trimmed | awk '{print $5}'`)
-        echo ${i::-1}": "$driveModel
+        driveCapacity=(`lsblk | grep $trimmed | awk '{print $4}'`)
+        echo $trimmed": "$driveModel" -- "$driveCapacity
         current=$trimmed
     fi
-    echo ${count}. $i
+    driveCapacity=(`lsblk | grep $i | awk '{print $4}'`)
+    echo ${count}. $i" -- "$driveCapacity
     let "count++"
 done
 let "count--"
