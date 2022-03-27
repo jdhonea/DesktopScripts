@@ -2,10 +2,15 @@
 
 A collection of simple Linux scripts to make my life easier.
 
+### Available Scripts:
+[Mount New Drive](#mountnewdrive)  
+[BatStat](#batstat)
+
 ### MountNewDrive:
 
 **Description:**  
 Lists available drives and their partitions, allowing user to easilly mount them in their desired location. Support Luks encrypted drives.
+>**Note:** Requires sudo access to mount the drive. 
 
 **Usage:**  
 `bash /path/to/mnd`  
